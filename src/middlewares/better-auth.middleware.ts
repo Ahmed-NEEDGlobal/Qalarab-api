@@ -186,7 +186,8 @@ export const requireOrganization = (options: OrganizationAuthOptions = {}) => {
     }
 
     // Get active organization from session
-    const activeOrgId = session.activeOrganizationId;
+    // Note: activeOrganizationId requires the organization plugin to be enabled
+    const activeOrgId = (session as any).activeOrganizationId;
 
     if (!activeOrgId && required) {
       return ApiResponseHelper.forbidden(
@@ -197,8 +198,9 @@ export const requireOrganization = (options: OrganizationAuthOptions = {}) => {
 
     if (activeOrgId) {
       // Get member details with role
+      // Note: getActiveMember requires the organization plugin to be enabled
       try {
-        const member = await auth.api.getActiveMember({
+        const member = await (auth.api as any).getActiveMember({
           headers: c.req.raw.headers,
         });
 
@@ -224,10 +226,11 @@ export const requireOrganization = (options: OrganizationAuthOptions = {}) => {
         }
 
         // Check permissions if specified
+        // Note: userHasPermission is from the admin plugin
         if (permissions) {
-          const hasPermission = await auth.api.hasPermission({
+          const hasPermission = await auth.api.userHasPermission({
             headers: c.req.raw.headers,
-            body: { permissions },
+            body: { permission: permissions },
           });
 
           if (!hasPermission) {
@@ -262,14 +265,14 @@ export const requireOrgPermissions = (permissions: Permission) => {
       return ApiResponseHelper.unauthorized(c, 'Authentication required');
     }
 
-    if (!session.activeOrganizationId) {
+    if (!(session as any).activeOrganizationId) {
       return ApiResponseHelper.forbidden(c, 'No active organization selected');
     }
 
     try {
-      const hasPermission = await auth.api.hasPermission({
+      const hasPermission = await auth.api.userHasPermission({
         headers: c.req.raw.headers,
-        body: { permissions },
+        body: { permission: permissions },
       });
 
       if (!hasPermission) {
@@ -304,12 +307,12 @@ export const requireOrgRole = (roles: string | string[]) => {
       return ApiResponseHelper.unauthorized(c, 'Authentication required');
     }
 
-    if (!session.activeOrganizationId) {
+    if (!(session as any).activeOrganizationId) {
       return ApiResponseHelper.forbidden(c, 'No active organization selected');
     }
 
     try {
-      const member = await auth.api.getActiveMember({
+      const member = await (auth.api as any).getActiveMember({
         headers: c.req.raw.headers,
       });
 
@@ -401,7 +404,7 @@ export const requirePlatformAdminOrOrgOwner = () => {
     }
 
     // Check organization owner
-    if (!session?.activeOrganizationId) {
+    if (!(session as any)?.activeOrganizationId) {
       return ApiResponseHelper.forbidden(
         c,
         'No active organization or insufficient platform permissions'
@@ -409,7 +412,7 @@ export const requirePlatformAdminOrOrgOwner = () => {
     }
 
     try {
-      const member = await auth.api.getActiveMember({
+      const member = await (auth.api as any).getActiveMember({
         headers: c.req.raw.headers,
       });
 
@@ -449,12 +452,12 @@ export const requireOrganizationSetup = () => {
   return async (c: Context<AppBindings>, next: Next) => {
     const session = c.get('session');
 
-    if (!session?.activeOrganizationId) {
+    if (!(session as any)?.activeOrganizationId) {
       return ApiResponseHelper.forbidden(c, 'No active organization selected');
     }
 
     try {
-      const setupStatus = await checkOrganizationSetup(session.activeOrganizationId);
+      const setupStatus = await checkOrganizationSetup((session as any).activeOrganizationId);
 
       if (!setupStatus.isSetup) {
         if (setupStatus.status === 'pending') {
