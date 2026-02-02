@@ -68,7 +68,7 @@
     "bullmq": "^5.61.0",
     "date-fns": "^4.1.0",
     "dotenv": "^16.5.0",
-    "hono": "4.10.2",
+    "hono": "^4.11.7",
     "jose": "^6.1.0",
     "jsonwebtoken": "^9.0.2",
     "meilisearch": "^0.50.0",
