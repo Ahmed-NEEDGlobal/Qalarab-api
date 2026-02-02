@@ -9,7 +9,7 @@ const projectRoot = resolve(__dirname, '..');
 async function build() {
   try {
     await esbuild.build({
-      entryPoints: [resolve(projectRoot, 'api/index.ts')],
+      entryPoints: [resolve(projectRoot, 'src/vercel/index.ts')],
       bundle: true,
       platform: 'node',
       target: 'node18',

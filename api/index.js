@@ -92511,7 +92511,7 @@ app.all("/api/*", async (c, next) => {
 });
 var app_default = app;
 
-// api/index.ts
+// src/vercel/index.ts
 var index_default = handle(app_default);
 export {
   index_default as default
