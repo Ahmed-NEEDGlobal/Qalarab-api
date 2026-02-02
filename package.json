@@ -4,9 +4,9 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "tsx watch src/app.ts",
+    "dev": "tsx watch src/server.ts",
     "build": "tsc && tsc-alias",
-    "start": "node dist/app.js",
+    "start": "node dist/server.js",
     "lint": "eslint .",
     "format": "prettier --write .",
     "test": "vitest run",

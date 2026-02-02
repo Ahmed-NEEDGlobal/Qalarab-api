@@ -15,6 +15,7 @@
     "outDir": "./dist",
     "skipLibCheck": true
   },
+  "include": ["src/**/*", "api/**/*"],
   "tsc-alias": {
     "resolveFullPaths": true
   }
