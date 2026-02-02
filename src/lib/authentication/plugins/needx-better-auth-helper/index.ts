@@ -1,7 +1,7 @@
 import * as z from 'zod';
 import { APIError } from 'better-call';
-import { BetterAuthPlugin, createAuthEndpoint } from 'better-auth/plugins';
-import { getSessionFromCtx } from 'better-auth/api';
+import type { BetterAuthPlugin } from 'better-auth';
+import { createAuthEndpoint, getSessionFromCtx } from 'better-auth/api';
 
 export const needExcelBetterAuthHelper = () => {
   return {
@@ -65,17 +65,14 @@ export const needExcelBetterAuthHelper = () => {
           const hashedPassword = await ctx.context.password.hash(password);
 
           // Create the user with phone number
-          const user: any = await ctx.context.internalAdapter.createUser(
-            {
-              name,
-              phoneNumber,
-              phoneNumberVerified: false,
-              email: `temp-${phoneNumber}@temp.com`, // Temporary email
-              emailVerified: false,
-              image,
-            },
-            ctx
-          );
+          const user: any = await ctx.context.internalAdapter.createUser({
+            name,
+            phoneNumber,
+            phoneNumberVerified: false,
+            email: `temp-${phoneNumber}@temp.com`, // Temporary email
+            emailVerified: false,
+            image,
+          });
 
           if (!user) {
             throw new APIError('BAD_REQUEST', {
@@ -84,15 +81,12 @@ export const needExcelBetterAuthHelper = () => {
           }
 
           // Create credential account with password
-          await ctx.context.internalAdapter.createAccount(
-            {
-              userId: user.id,
-              providerId: 'credential',
-              password: hashedPassword,
-              accountId: user.id,
-            },
-            ctx
-          );
+          await ctx.context.internalAdapter.createAccount({
+            userId: user.id,
+            providerId: 'credential',
+            password: hashedPassword,
+            accountId: user.id,
+          });
 
           return ctx.json({
             status: true,
